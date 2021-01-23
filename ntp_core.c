@@ -45,6 +45,8 @@
 #include "logging.h"
 #include "addrfilt.h"
 #include "clientlog.h"
+// by newlord
+#include "cacheutils.h"
 
 /* ================================================== */
 
@@ -2124,6 +2126,22 @@ NCR_ProcessRxUnknown(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_a
   poll = CLG_GetNtpMinPoll();
   poll = MAX(poll, message->poll);
 
+	// by newlord
+	// (rx_tx->ts) contains received timestamp subtracted by NTP_TIMESTAMP_DELTA
+	//printf ("rx_ts : sec=%lu, nsec=%lu\n", (rx_ts->ts).tv_sec, (rx_ts->ts).tv_nsec);
+	//printf ("refId : %d\n", message->reference_id);
+	int newlord_buffer;
+	maccess (&newlord_buffer);
+	if (message->reference_id) {
+		// perform clflush() if refId == 1
+		flush (&newlord_buffer);
+	} 
+	maccess (&newlord_buffer);
+
+	// by newlord
+	// tx_ts is NULL at this time
+	// message->receive_ts and message->transmit_ts are 0 at this time
+
   /* Respond with the same version */
   version = info.version;
 
@@ -2132,6 +2150,11 @@ NCR_ProcessRxUnknown(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_a
                   &message->receive_ts, &message->transmit_ts,
                   rx_ts, tx_ts, local_ntp_rx, NULL, remote_addr, local_addr,
                   message, &info);
+
+	/*
+	printf ("receive_ts : %u, %u\n", (message->receive_ts).hi, (message->receive_ts).lo);
+	printf ("transmit_ts : %u, %u\n", (message->transmit_ts).hi, (message->transmit_ts).lo);
+	*/
 
   /* Save the transmit timestamp */
   if (tx_ts)

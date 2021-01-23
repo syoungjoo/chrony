@@ -9,7 +9,6 @@
 core.*
 tags
 /RELEASES
-/Makefile
 /chronyc
 /chronyd
 /config.h

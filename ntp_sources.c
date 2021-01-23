@@ -1045,6 +1045,7 @@ NSR_ProcessRx(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_addr,
       }
     }
   } else {
+		// we are here if packets from ntpc are received (by newlord)
     NCR_ProcessRxUnknown(remote_addr, local_addr, rx_ts, message, length);
   }
 }

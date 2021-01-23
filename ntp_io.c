@@ -398,6 +398,7 @@ process_message(SCK_Message *message, int sock_fd, int event)
     return;
   }
 
+
   NSR_ProcessRx(&message->remote_addr.ip, &local_addr, &local_ts, message->data, message->length);
 }
 

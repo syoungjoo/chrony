@@ -551,6 +551,7 @@ dispatch_timeouts(struct timespec *now) {
 /* nfd is the number of bits set in all fd_sets */
 
 static void
+//__attribute__ ((noinline)) 	/* added by newlord */
 dispatch_filehandlers(int nfd, fd_set *read_fds, fd_set *write_fds, fd_set *except_fds)
 {
   FileHandlerEntry *ptr;
@@ -574,8 +575,10 @@ dispatch_filehandlers(int nfd, fd_set *read_fds, fd_set *write_fds, fd_set *exce
     if (read_fds && FD_ISSET(fd, read_fds)) {
       /* This descriptor can be read from, dispatch its handler */
       ptr = (FileHandlerEntry *)ARR_GetElement(file_handlers, fd);
-      if (ptr->handler)
+			// read_from_socket() is called (by newlord)
+      if (ptr->handler) {
         (ptr->handler)(fd, SCH_FILE_INPUT, ptr->arg);
+			}
       nfd--;
     }
 
@@ -796,6 +799,7 @@ SCH_MainLoop(void)
     p_except_fds = &except_fds;
     fill_fd_sets(&p_read_fds, &p_write_fds, &p_except_fds);
 
+
     /* if there are no file descriptors being waited on and no
        timeout set, this is clearly ridiculous, so stop the run */
     if (!ptv && !p_read_fds && !p_write_fds)
@@ -803,6 +807,7 @@ SCH_MainLoop(void)
 
     status = select(one_highest_fd, p_read_fds, p_write_fds, p_except_fds, ptv);
     errsv = errno;
+
 
     LCL_ReadRawTime(&now);
     LCL_CookTime(&now, &cooked, &err);
