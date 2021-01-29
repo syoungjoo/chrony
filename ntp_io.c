@@ -389,15 +389,16 @@ process_message(SCK_Message *message, int sock_fd, int event)
 	flush (&newlord_buffer);
 	maccess (&bitstream[1]);
 	maccess (&bitstream[2]);
+	unsigned int x = msg->reference_id;
 #if 0
-	if ( msg->reference_id ) {
+	if ( x == 2) {
 		maccess(&newlord_buffer);
 	}
-#endif
-	int x = msg->reference_id;
+#else
 	if ( x < 1 ) 
 		if (bitstream[x])
 			maccess (&newlord_buffer);
+#endif
 
 	// by newlord
 	// we get receive timestamp here

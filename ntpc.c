@@ -195,6 +195,7 @@ unsigned int sendPacket(int refId)
   return tf;
 }
 
+//#define COUNT 1000000
 #define COUNT 1000000
 //#define COUNT 1
 int main( int argc, char* argv[ ] )
@@ -205,8 +206,8 @@ int main( int argc, char* argv[ ] )
 	int d=0;
 
 	while (c++ < COUNT) {
-#if 0
-		refId = c%2;
+#if 1
+		refId = c%2 + 1;
 #else
 		refId = ( (c%100) == 0 )?1:0;;
 		if (refId == 1) 

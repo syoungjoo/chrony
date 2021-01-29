@@ -53,9 +53,12 @@ EXTRA_CLI_LIBS =
 # Until we have a main procedure we can link, just build object files
 # to test compilation
 
-all : chronyd chronyc ntpc
+all : chronyd chronyc ntpc spectre
 
 ntpc : ntpc.c
+	$(CC) $(CFLAGS) -o $@ $^
+
+spectre: spectre.c
 	$(CC) $(CFLAGS) -o $@ $^
 
 chronyd : $(OBJS)
