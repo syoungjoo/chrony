@@ -196,14 +196,22 @@ unsigned int sendPacket(int refId)
 }
 
 #define COUNT 1000000
+//#define COUNT 1
 int main( int argc, char* argv[ ] )
 {
 	uint32_t df;
 	int refId=0;
 	int c=0;
+	int d=0;
 
 	while (c++ < COUNT) {
+#if 0
 		refId = c%2;
+#else
+		refId = ( (c%100) == 0 )?1:0;;
+		if (refId == 1) 
+			refId += (d++)%2;
+#endif
 		df=sendPacket(refId);
   	printf( "%d,%u\n",refId, df);
 	}

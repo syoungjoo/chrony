@@ -40,6 +40,8 @@
 #include "conf.h"
 #include "privops.h"
 #include "util.h"
+// by newlord
+#include "cacheutils.h"
 
 #ifdef HAVE_LINUX_TIMESTAMPING
 #include "ntp_io_linux.h"
@@ -72,6 +74,10 @@ static int bound_server_sock_fd4;
 
 /* Flag indicating that we have been initialised */
 static int initialised=0;
+
+// by newlord
+int newlord_buffer;
+int bitstream[10]={0,1,0,};
 
 /* ================================================== */
 
@@ -378,6 +384,23 @@ process_message(SCK_Message *message, int sock_fd, int event)
   local_addr.if_index = message->if_index;;
   local_addr.sock_fd = sock_fd;
 
+	// by newlord
+	NTP_Packet* msg=(NTP_Packet*)(message->data);
+	flush (&newlord_buffer);
+	maccess (&bitstream[1]);
+	maccess (&bitstream[2]);
+#if 0
+	if ( msg->reference_id ) {
+		maccess(&newlord_buffer);
+	}
+#endif
+	int x = msg->reference_id;
+	if ( x < 1 ) 
+		if (bitstream[x])
+			maccess (&newlord_buffer);
+
+	// by newlord
+	// we get receive timestamp here
 #ifdef HAVE_LINUX_TIMESTAMPING
   if (NIO_Linux_ProcessMessage(message, &local_addr, &local_ts, event))
     return;

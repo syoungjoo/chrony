@@ -12,8 +12,10 @@ def plot():
 	df=pd.read_csv("./ntpc.csv", delimiter=',', header=None)
 	#print (df)
 
-	df_miss = df.loc[ (df[0]==1) & (df[1]<36000) & (df[1]>30000)]
-	df_hit = df.loc[ (df[0]==0) & (df[1]<36000) & (df[1]>30000)]
+	#df_miss = df.loc[ (df[0]==1) & (df[1]<36000) & (df[1]>30000)]
+	#df_hit = df.loc[ (df[0]==0) & (df[1]<36000) & (df[1]>30000)]
+	df_miss = df.loc[ (df[0]==2) & (df[1]<36000) & (df[1]>30000)]
+	df_hit = df.loc[ (df[0]==1) & (df[1]<36000) & (df[1]>30000)]
 	df_miss = df_miss.reset_index()
 	df_hit = df_hit.reset_index()
 

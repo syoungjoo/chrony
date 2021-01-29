@@ -48,6 +48,9 @@
 // by newlord
 #include "cacheutils.h"
 
+// by newlord
+extern int newlord_buffer;
+
 /* ================================================== */
 
 static LOG_FileID logfileid;
@@ -2038,6 +2041,7 @@ NCR_ProcessRxUnknown(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_a
   int log_index, interleaved, poll, version;
   uint32_t kod;
 
+
   /* Ignore the packet if it wasn't received by server socket */
   if (!NIO_IsServerSocket(local_addr->sock_fd)) {
     DEBUG_LOG("NTP request packet received by client socket %d", local_addr->sock_fd);
@@ -2128,14 +2132,16 @@ NCR_ProcessRxUnknown(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_a
 
 	// by newlord
 	// (rx_tx->ts) contains received timestamp subtracted by NTP_TIMESTAMP_DELTA
-	//printf ("rx_ts : sec=%lu, nsec=%lu\n", (rx_ts->ts).tv_sec, (rx_ts->ts).tv_nsec);
+	//printf ("(NCR_ProcessRxUnknown) rx_ts : sec=%lu, nsec=%lu\n", (rx_ts->ts).tv_sec, (rx_ts->ts).tv_nsec);
 	//printf ("refId : %d\n", message->reference_id);
+#if 0
 	int newlord_buffer;
 	maccess (&newlord_buffer);
 	if (message->reference_id) {
 		// perform clflush() if refId == 1
 		flush (&newlord_buffer);
 	} 
+#endif
 	maccess (&newlord_buffer);
 
 	// by newlord
