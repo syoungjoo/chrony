@@ -3,8 +3,10 @@
 #include "cacheutils.h"
 
 // by newlord
-int newlord_buffer;
-int bitstream[10]={0,1,0,};
+int __attribute__ ((aligned(4096)))  newlord_buffer;
+int __attribute__ ((aligned(4096)))  bitstream[10]={0,1,0,};
+
+int __attribute__ ((aligned(4096))) x_size=1;
 
 int test(unsigned int val); 
 
@@ -22,18 +24,20 @@ inline uint64_t rdtsc() {
 }
 
 
-int test(unsigned int val) {
+__attribute__ ((noinline)) int test(unsigned int x) {
+//int test(unsigned int x) {
 
-	unsigned int x = val;
 	uint64_t s,e;
 
-	// by newlord
-	flush (&newlord_buffer);
-	maccess (&bitstream[1]);
-	maccess (&bitstream[2]);
+	//flush (&x_size);
+	//maccess (&bitstream[0]);
+	//maccess (&bitstream[1]);
+	//maccess (&bitstream[2]);
+  asm volatile("mfence");
+	
 
 #if 1
-	if ( x < 1 ) 
+	if ( x < x_size ) 
 		if (bitstream[x])
 			maccess (&newlord_buffer);
 #else
@@ -41,7 +45,6 @@ int test(unsigned int val) {
 		maccess (&newlord_buffer);
 
 #endif
-
 
 	s=rdtsc();
 	maccess (&newlord_buffer);
@@ -51,20 +54,33 @@ int test(unsigned int val) {
 }
 
 
-#define LOOP	100000
-#define COUNT	1000
+#define LOOP	1000000
+//#define COUNT	40000
+#define COUNT	30000
 int main () {
 
 	uint64_t d;
-	int i,j;
-	unsigned int val;
+	int i;
+	unsigned int val=1;
+	unsigned int x;
+
+	//printf ("newlord_buffer:%p\n", &newlord_buffer);
+	//printf ("bitstream:%p\n",bitstream);
 	
 	for (i=0; i < LOOP; i++) {
-		for (j=0; j < COUNT ; j++)
-			test (0);
-		val = (unsigned int) (i%2 + 1);
-		d=test(val);
-		printf ("%d,%ld\n",val, d);
+		flush (&newlord_buffer);
+		flush (&x_size);
+		maccess (&bitstream[1]);
+		maccess (&bitstream[2]);
+
+		if (i%COUNT != 0) {
+			x=0;
+		} else {
+			val= (val==1)?2:1;
+			x=val;
+		}
+		d=test(x);
+		printf ("%d,%ld\n",x, d);
 	}
 
 }

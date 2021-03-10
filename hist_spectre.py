@@ -10,7 +10,7 @@ import seaborn as sns
 
 def plot():
 	df=pd.read_csv("./ntpc.csv", delimiter=',', header=None)
-	#print (df)
+	#print(df)
 
 	#df_miss = df.loc[ (df[0]==1) & (df[1]<36000) & (df[1]>30000)]
 	#df_hit = df.loc[ (df[0]==0) & (df[1]<36000) & (df[1]>30000)]
@@ -25,10 +25,14 @@ def plot():
 	bins=list(range(0, 400, 2))
 	#print(bins)
 
+	print(df_miss)
+	print(df_hit)
+
 	avg_miss=df_miss["miss"].mean()
 	avg_hit=df_hit["hit"].mean()
 
 	print("miss={0}, hit={1}, diff={2}".format(avg_miss, avg_hit, avg_miss-avg_hit))
+	return
 
 
 
@@ -41,5 +45,8 @@ def plot():
 	sns.distplot(df_miss["miss"], ax=axe, bins=bins, hist=True, kde=False, label='miss')
 	sns.distplot(df_hit["hit"], ax=axe, bins=bins, hist=True, kde=False,  label='hit')
 	plt.show()
+
+
+
 
 plot()

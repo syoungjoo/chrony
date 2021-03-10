@@ -30,6 +30,7 @@ DESTDIR =
 
 CC = gcc
 CFLAGS = -O2 -g -D_FORTIFY_SOURCE=2 -fPIE -fstack-protector-strong --param=ssp-buffer-size=4 -Wmissing-prototypes -Wall -pthread
+CFLAGS_SPECTRE = -O2 -g -Wall
 CPPFLAGS = 
 LDFLAGS =  -pie -Wl,-z,relro,-z,now
 
@@ -53,13 +54,14 @@ EXTRA_CLI_LIBS =
 # Until we have a main procedure we can link, just build object files
 # to test compilation
 
-all : chronyd chronyc ntpc spectre
+#all : chronyd chronyc ntpc spectre
+all : spectre
 
 ntpc : ntpc.c
 	$(CC) $(CFLAGS) -o $@ $^
 
 spectre: spectre.c
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS_SPECTRE) -o $@ $^
 
 chronyd : $(OBJS)
 	$(CC) $(CFLAGS) -o chronyd $(OBJS) $(LDFLAGS) $(LIBS) $(EXTRA_LIBS)
